@@ -23,7 +23,6 @@ function Get-SnapshotTree(){
     
     process{
         foreach($v in $vm){
-            "[{0}]" -F $v.Name
             Get-Snapshot -VM $v | %{
                 $ss = $_
                 while($ss.Parent){
@@ -43,11 +42,12 @@ function Get-SnapshotSubTree(){
     param(
         [Parameter(Mandatory=$True, ValueFromPipeline=$True)]
         $ss,
-        [string]$leftPad,
+        [string]$leftPad = "",
         [switch]$isChild
     )
     
-    if(! $isChild){
+    if($ss -and (! $isChild)){
+        "[{0}]" -F $ss.VM.Name
         "{0} ({1})" -F ($ss.Name + @(if($ss.IsCurrent){ " *" })), $ss.Id
     }
     
