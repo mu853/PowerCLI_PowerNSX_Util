@@ -34,6 +34,7 @@ function Get-SnapshotTree(){
     }
 }
 
+
 function Get-SnapshotSubTree(){
 <#
     .SYNOPSIS
@@ -61,6 +62,39 @@ function Get-SnapshotSubTree(){
         }else{
             $leftPad + "„¯" + $snapshotName
             Get-SnapshotSubTree -ss $child -leftPad ($leftPad + "  ") -isChild
+        }
+    }
+}
+
+
+function Remove-AllSnapshots(){
+    param(
+        [Parameter(Mandatory=$True, ValueFromPipeline=$true)]
+        [object[]]$vm,
+        [boolean]$Confirm = $true
+    )
+    
+    process{
+        foreach($v in $vm){
+            Get-Snapshot -VM $v | sort Created | select -First 1 | Remove-Snapshot -RemoveChildren -RunAsync -Confirm:$Confirm
+        }
+    }
+}
+
+
+function Move-VMToPrevSnapshot(){
+    param(
+        [Parameter(Mandatory=$True, ValueFromPipeline=$true)]
+        [object[]]$vm,
+        [boolean]$Confirm = $true
+    )
+
+    process{
+        foreach($v in $vm){
+            $prevSnapshot = (Get-Snapshot -VM $v | ?{ $_.IsCurrent }).Parent
+            if($prevSnapshot){
+                Set-VM -VM $v -Snapshot $prevSnapshot -RunAsync -Confirm:$Confirm
+            }
         }
     }
 }
