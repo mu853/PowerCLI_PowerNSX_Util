@@ -16,29 +16,16 @@ function Start-VMRC(){
 #>
     param(
         [Parameter(Mandatory=$True, ValueFromPipeline=$True)]
-        [object[]]$vm,
+        [VMware.VimAutomation.ViCore.Types.V1.Inventory.VirtualMachine[]]$vm,
 
-        [string]$username,
-        [string]$viserver,
         [switch]$createShortcut
     )
 
     begin{
-        $vmrc = "C:\Program Files (x86)\vmware\VMware Remote Console\vmrc.exe"
-        if(!(Test-Path $vmrc -PathType Leaf)){
-            throw "{0} not found." -F $vmrc
-        }
-
-        if((Test-Path variable:global:DefaultVIServer) -and $Global:DefaultVIServer.IsConnected){
-            if(!$viserver){
-                $viserver = $Global:DefaultVIServer.Name
-            }
-            if(!$username){
-                $username = $Global:DefaultVIServer.User
-            }
-        }else{
-            if($vm | ?{ $_ -isnot [VMware.VimAutomation.ViCore.Types.V1.Inventory.VirtualMachine] }){
-                throw "Connect to vCenter Server first."
+        if($createShortcut){
+            $vmrc = "C:\Program Files (x86)\vmware\VMware Remote Console\vmrc.exe"
+            if(!(Test-Path $vmrc -PathType Leaf)){
+                throw "{0} not found." -F $vmrc
             }
         }
     }
@@ -50,15 +37,18 @@ function Start-VMRC(){
             }
 
             if($v){
-                $uri = "vmrc://{0}@{1}/?moid={2}" -F $username, $viserver, $v.ExtensionData.MoRef.Value
                 if($createShortcut){
+                    $viserver = $Global:DefaultVIServer.Name
+                    $username = $Global:DefaultVIServer.User
+                    $uri = "vmrc://{0}@{1}/?moid={2}" -F $username, $viserver, $v.ExtensionData.MoRef.Value
+
                     $wsh = New-Object -ComObject WScript.Shell
                     $shortcut = $wsh.CreateShortcut((Convert-Path ".") + "\" + $v.Name + ".lnk")
                     $shortcut.TargetPath = $vmrc
                     $shortcut.Arguments = $uri
                     $shortcut.Save()
                 }else{
-                    & $vmrc $uri
+                    Open-VMConsoleWindow $vm
                 }
             }
         }
