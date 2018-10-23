@@ -19,7 +19,13 @@ PowerCLIを開いて、ファイルの中身をコピペ
 2. 下記コマンドを実行してCSV作成
 ```
 Connect-VIServer <vCenterサーバーのIP or FQDN> -User administrator@vsphere.local -Password <パスワード>
-Export-vCenterAlarm | Export-Csv -Encoding UTF8 -NoTypeInformation -Path <保存するCSVのフルパス.csv>
+Export-vCenterAlarm -Path <保存するCSVのフルパス.csv>
+```
+
+Excelでフィルタを掛けるつもりなら、```-simple``` オプションを付ける
+あと、デフォルトは日本語なので、英語で出力する場合は ```-lang en```を付ける
+```
+Export-vCenterAlarm -Path <保存するCSVのフルパス.csv> -simple -lang en
 ```
 
 4. CSVを整形
