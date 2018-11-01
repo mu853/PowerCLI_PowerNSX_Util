@@ -1,0 +1,4 @@
+﻿Section,Name,SourceType,Source,DestinationType,Destination,Service,Action,AppliedTo
+section1,Rule 2,SecurityGroup,SG-01,IPset,IPset1,ICMP Echo,allow,SG-01
+section1,Rule 3,ipaddress,192.168.10.2,ipaddress,192.168.12.0/24,,deny,
+section2,Rule 4,IPset,IPset2,SecurityGroup,SG-02,ICMP Echo,allow,SG-03

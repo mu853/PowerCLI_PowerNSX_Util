@@ -1,0 +1,5 @@
+﻿Name,SetOperator,CriteriaOperator,Seq,Key,Condition,Value,EntityType,EntityName
+SG-02,AND,ALL,1,VMName,starts_with,web,,
+SG-02,,,2,,,,LogicalSwitch,LS-01
+SG-03,AND,ALL,1,VMName,starts_with,db,,
+SG-03,,,2,,,,IPset,IPSet4
