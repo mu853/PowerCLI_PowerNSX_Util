@@ -31,7 +31,7 @@ function GetDestinations {
         $destinations
     )
     
-    return GetSource -sources $destinations
+    return GetSources -sources $destinations
 }
 
 function GetServices {
